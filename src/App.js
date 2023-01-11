@@ -1,7 +1,21 @@
-export default function App() {
+import { ForgotPassword, Home, Offers, Profile, SignIn, SignUp } from './pages'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+
+const App = () => {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <>
+    <Router>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/profile' element={<Profile />} />
+        <Route path='/sign-in' element={<SignIn />} />
+        <Route path='/sign-up' element={<SignUp />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/offers' element={<Offers />} />
+      </Routes>
+    </Router>
+    </>
   )
 }
+
+export default App
