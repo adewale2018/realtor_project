@@ -30,7 +30,7 @@ const SignUp = () => {
       <div className='flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto'>
         <div className='md:w-[67%] lg:w-[50%] mb-12 md:mb-6'>
           <img
-            src='https://images.unsplash.com/flagged/photo-1564767609342-620cb19b2357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8a2V5fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60'
+            src='https://images.unsplash.com/photo-1556741533-6e6a62bd8b49?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHJlZ2lzdGVyfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60'
             alt='key'
             className='w-full rounded-2xl'
           />
@@ -89,7 +89,7 @@ const SignUp = () => {
                   </p>
                   <p>
                     <Link
-                      to='forgot-password'
+                      to='/forgot-password'
                       className='text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out'
                     >
                       Forgot password?
