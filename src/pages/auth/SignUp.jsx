@@ -1,11 +1,24 @@
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile
+} from 'firebase/auth';
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
-import { Link } from 'react-router-dom';
 import { OAuthButton } from '../../components';
+import { db, } from '../../firebaseConfig';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ fullName: '', email: '', password: '' });
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   const handlePasswordTextChange = () =>
@@ -18,12 +31,32 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    console.log('VALUES>>>', formData)
-  }
-
   const { fullName, email, password } = formData;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth?.currentUser, {
+        displayName: fullName,
+      });
+      const user = userCredentials.user;
+      const formDataCopy = { ...formData }
+      delete formDataCopy.password
+      formDataCopy.timestamp = serverTimestamp()
+      await setDoc(doc(db, 'users', user.uid), formDataCopy)
+      toast.success('Successfully signed up')
+      navigate('/')
+    } catch (error) {
+      toast.error(error.code);
+    }
+  };
+
   return (
     <section>
       <h1 className='text-3xl text-center mt-6 font-bold'>Sign Up</h1>
@@ -37,7 +70,7 @@ const SignUp = () => {
         </div>
         <div className='w-full md:w-[67%] lg:w-[40%] lg:ml-20'>
           <form onSubmit={handleSubmit}>
-          <input
+            <input
               type='text'
               className='mb-6 w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out '
               placeholder='Enter your full name'
