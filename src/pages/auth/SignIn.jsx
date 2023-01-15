@@ -1,10 +1,13 @@
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import React, { useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { OAuthButton } from '../../components';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -18,10 +21,23 @@ const SignIn = () => {
     });
   };
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    console.log('VALUES>>>', formData)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential) {
+        toast.success('Successfully login');
+        navigate('/');
+      }
+    } catch (error) {
+      toast(error.code);
+    }
+  };
 
   const { email, password } = formData;
   return (

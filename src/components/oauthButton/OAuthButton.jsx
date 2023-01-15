@@ -3,34 +3,33 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import React from 'react';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const OAuthButton = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const onGoogleClick = async () => {
     try {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
-      const res = await signInWithPopup(auth, provider)
-      const user  = res.user
+      const res = await signInWithPopup(auth, provider);
+      const user = res.user;
 
       // Check if the user already exist in the database
-      const docRef = doc(db, 'users', user.uid)
-      const docSnap = await getDoc(docRef)
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
 
-      if(!docSnap.exists()) {
+      if (!docSnap.exists()) {
         await setDoc(docRef, {
           name: user.displayName,
           email: user.email,
-          timestamp: serverTimestamp()
-        })
+          timestamp: serverTimestamp(),
+        });
       }
-      toast.success('Success')
-      navigate('/')
+      toast.success('Success');
+      navigate('/');
     } catch (error) {
-      toast.error('Something went wrong, try again!')
-
+      toast.error(error.code);
     }
   };
   return (
