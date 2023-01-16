@@ -4,16 +4,16 @@ import React, { useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  updateProfile
+  updateProfile,
 } from 'firebase/auth';
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 
 import { OAuthButton } from '../../components';
-import { db, } from '../../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { toast } from 'react-toastify';
 
 const SignUp = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -46,12 +46,12 @@ const SignUp = () => {
         displayName: fullName,
       });
       const user = userCredentials.user;
-      const formDataCopy = { ...formData }
-      delete formDataCopy.password
-      formDataCopy.timestamp = serverTimestamp()
-      await setDoc(doc(db, 'users', user.uid), formDataCopy)
-      toast.success('Successfully signed up')
-      navigate('/')
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      await setDoc(doc(db, 'users', user.uid), formDataCopy);
+      toast.success('Successfully signed up');
+      navigate('/');
     } catch (error) {
       toast.error(error.code);
     }
