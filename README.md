@@ -1,11 +1,11 @@
-# Realtor Web
+# Realtor Web App
 
 ## How to setup the project.
  - Make sure that you have Node.js installed on your machine.
  - Clone the project to your machine [Link to the Project](https://github.com/adewale2018/realtor_project.git).
  - Cd into the project directory and then open your terminal.
  - Run the command `npm install` OR `yarn install` to install the project dependencies.
- - After a successful installion of the dependencies, get the project running by the command `npm start` OR `yarn start`.
+ - After a successful installation of the dependencies, get the project running by the command `npm start` OR `yarn start`.
 
 ## Technologies used are:
  - React [Create React App](https://github.com/facebook/create-react-app).
