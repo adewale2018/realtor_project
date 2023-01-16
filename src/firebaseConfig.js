@@ -8,7 +8,7 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCIwsRhc93omHGR7K-qxqmVGjMyrzCzh6U",
+  apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: "realtor-project-3cde7.firebaseapp.com",
   projectId: "realtor-project-3cde7",
   storageBucket: "realtor-project-3cde7.appspot.com",
