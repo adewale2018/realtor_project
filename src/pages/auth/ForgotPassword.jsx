@@ -1,16 +1,24 @@
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import React, { useState } from 'react';
 
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
 
-  const handleChange = (e) => setEmail(e.target.value)
+  const handleChange = (e) => setEmail(e.target.value);
 
-  const handleSubmit = e => {
-    e.preventDefault()
-    console.log('VALUES>>>', email)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      toast.success('Check your email for the rest password link');
+    } catch (error) {
+      toast.error(error.code);
+    }
+  };
 
   return (
     <section>
@@ -44,24 +52,24 @@ const ForgotPassword = () => {
               <p className='text-center font-semibold mx-4'>OR</p>
             </div>
             <div className='flex justify-between whitespace-nowrap text-sm sm:text-md mt-3'>
-                  <p>
-                    Don't have a account yet?{' '}
-                    <Link
-                      to='/sign-up'
-                      className='text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1'
-                    >
-                      Register
-                    </Link>
-                  </p>
-                  <p>
-                    <Link
-                      to='/sign-in'
-                      className='text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out'
-                    >
-                      Sign in
-                    </Link>
-                  </p>
-                </div>
+              <p>
+                Don't have a account yet?{' '}
+                <Link
+                  to='/sign-up'
+                  className='text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1'
+                >
+                  Register
+                </Link>
+              </p>
+              <p>
+                <Link
+                  to='/sign-in'
+                  className='text-blue-600 hover:text-blue-800 transition duration-200 ease-in-out'
+                >
+                  Sign in instead
+                </Link>
+              </p>
+            </div>
           </form>
         </div>
       </div>
