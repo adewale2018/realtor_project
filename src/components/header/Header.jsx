@@ -1,7 +1,6 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const auth = getAuth();
@@ -10,11 +9,7 @@ const Header = () => {
 
   const [pageState, setPageState] = useState('Sign in');
 
-  const getLocation = (pathName) => {
-    if (location.pathname === pathName) {
-      return true;
-    }
-  };
+  const getLocation = (pathName) => location.pathname === pathName ? true : false
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
