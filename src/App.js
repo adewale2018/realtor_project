@@ -1,8 +1,16 @@
-import { ForgotPassword, Home, Offers, Profile, SignIn, SignUp } from './pages';
+import {
+  CreateListing,
+  ForgotPassword,
+  Home,
+  Offers,
+  Profile,
+  SignIn,
+  SignUp,
+} from './pages';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import PrivateRoute from './components/private-route/PrivateRoute';
 
 import { Header } from './components';
+import PrivateRoute from './components/private-route/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 
 const App = () => {
@@ -19,6 +27,7 @@ const App = () => {
           <Route path='/sign-up' element={<SignUp />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/offers' element={<Offers />} />
+          <Route path='/create-listing' element={<CreateListing />} />
         </Routes>
       </Router>
       <ToastContainer

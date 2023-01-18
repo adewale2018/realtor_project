@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { getAuth, updateProfile } from 'firebase/auth';
-import { useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
+import { getAuth, updateProfile } from 'firebase/auth';
+
+import { HiOutlineHome } from 'react-icons/hi';
+import { actions as Mixpanel } from '../../components/mixpanel/MixPanel';
 import { db } from '../../firebaseConfig';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
   const auth = getAuth();
@@ -23,8 +26,9 @@ const Profile = () => {
 
   const handleLogOut = () => {
     auth.signOut();
-    navigate('/');
+    navigate('/sign-in');
     toast.success('Successfully log out');
+    Mixpanel.track('Log out');
   };
 
   const onSubmit = async () => {
@@ -52,18 +56,22 @@ const Profile = () => {
   };
   const { name, email } = formData;
 
+  useEffect(() => {
+    Mixpanel.track('Visit profile page');
+  }, []);
+
   return (
     <>
-      <section>
+      <section className=' max-w-6xl mx-auto flex justify-center items-center flex-col'>
         <h1 className='text-3xl text-center mt-6 font-bold'>Profile</h1>
-        <div className='flex justify-center flex-wrap items-center px-6 py-12 max-w-6xl mx-auto'>
+        <div className='w-full md:w-[50%] mt-6 px-3'>
           <form>
             <label htmlFor='name'>Name:</label>
             <input
               type='text'
               className={` ${
                 isEditing && 'bg-red-200 focus:bg-red-200'
-              } mb-6 w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out`}
+              } mb-6 w-full px-4 py-2 text-md text-gray-700 bg-white border-gray-300 rounded transition ease-in-out`}
               placeholder='Name'
               id='name'
               name='name'
@@ -75,7 +83,7 @@ const Profile = () => {
             <label htmlFor='name'>Email:</label>
             <input
               type='email'
-              className='mb-6 w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out '
+              className='mb-6 w-full text-sm px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out '
               placeholder='Email'
               id='email'
               name='email'
@@ -88,7 +96,7 @@ const Profile = () => {
                 Do you want to change your name?{' '}
                 <span
                   onClick={handleDetailChange}
-                  className='text-red-600 hover:text-red-700 transition ease-in-out duration-200 cursor-pointer ml-1'
+                  className='text-red-600 hover:text-red-700  font-semibold transition ease-in-out duration-200 cursor-pointer ml-1'
                 >
                   {isEditing ? 'Apply changes' : 'Edit'}
                 </span>
@@ -101,6 +109,18 @@ const Profile = () => {
               </p>
             </div>
           </form>
+          <button
+            type='submit'
+            className='w-full bg-blue-600 text-white uppercase px-7 py-3 text-sm font-medium rounded shadow-md hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800'
+          >
+            <Link
+              to='/create-listing'
+              className='flex justify-center items-center'
+            >
+              <HiOutlineHome className='mr-2 text-3xl bg-red-200 rounded-full p-1 border-2' />
+              Sell or rent your home
+            </Link>
+          </button>
         </div>
       </section>
     </>

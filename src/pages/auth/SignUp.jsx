@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 
+import { actions as Mixpanel } from '../../components/mixpanel/MixPanel'
 import { OAuthButton } from '../../components';
 import { db } from '../../firebaseConfig';
 import { toast } from 'react-toastify';
@@ -51,9 +52,12 @@ const SignUp = () => {
       formDataCopy.timestamp = serverTimestamp();
       await setDoc(doc(db, 'users', user.uid), formDataCopy);
       toast.success('Successfully signed up');
+      Mixpanel.identify(user.uid)
+      Mixpanel.track('Successful sign up')
       navigate('/');
     } catch (error) {
       toast.error(error.code);
+      Mixpanel.track('Sign up failed!')
     }
   };
 
