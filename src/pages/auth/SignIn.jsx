@@ -1,8 +1,9 @@
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
-import React, { useState } from 'react';
-
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+
+import { actions as Mixpanel } from '../../components/mixpanel/MixPanel';
 import { OAuthButton } from '../../components';
 import { toast } from 'react-toastify';
 
@@ -32,10 +33,17 @@ const SignIn = () => {
       );
       if (userCredential) {
         toast.success('Successfully login');
+        Mixpanel.track('Successful login');
+        Mixpanel.identify(userCredential.user.uid);
+        Mixpanel.people.set({
+          $first_name: userCredential.user.displayName,
+          $email: userCredential.user.email,
+        });
         navigate('/');
       }
     } catch (error) {
       toast(error.code);
+      Mixpanel.track('Login attempt failed');
     }
   };
 

@@ -16,4 +16,5 @@
  - React toastify [React Toastify](https://www.npmjs.com/package/react-toastify).
  - Unsplash [Unsplash.com](https://unsplash.com/).
  - React-icons [React-icons](https://react-icons.github.io/react-icons).
- - React [Create React App](https://github.com/facebook/create-react-app).
+ - Loader generator [Loading.io](https://loading.io/).
+ - Mixpanel [Mixpanel](https://mixpanel.com/).
