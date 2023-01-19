@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { actions as Mixpanel } from '../../components/mixpanel/MixPanel';
 
 const CreateListing = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +17,31 @@ const CreateListing = () => {
     discountPrice: 0,
   });
 
-  const handleChange = () => {};
+  const handleChange = (e) => {
+    let boolean = null;
+    if (e.target.value === 'true') {
+      boolean = true;
+    }
+    if (e.target.value === 'false') {
+      boolean = false;
+    }
+    if (e.target.files) {
+      setFormData((prevState) => ({
+        ...prevState,
+        images: e.target.files,
+      }));
+    }
+    if (!e.target.files) {
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.id]: boolean ?? e.target.value,
+      }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
 
   const {
     type,
@@ -30,33 +56,40 @@ const CreateListing = () => {
     regularPrice,
     discountPrice,
   } = formData;
+
+  useEffect(() => {
+    Mixpanel.track('visit create listing page');
+  }, []);
+
   return (
     <main className='px-2 max-w-md mx-auto mb-10'>
       <h1 className='text-3xl text-center mt-6 font-bold'>Create a Listing</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <p className='text-lg mt-6 font-semibold'>Sell / Rent</p>
         <div className='flex items-center mb-6'>
           <button
             type='button'
             id='type'
-            value='rent'
+            value='sell'
             className={`mr-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               type === 'rent'
                 ? 'bg-white text-black'
                 : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             Sell
           </button>
           <button
             type='button'
             id='type'
-            value='sale'
+            value='rent'
             className={`ml-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
-              type === 'sale'
+              type === 'sell'
                 ? 'bg-white text-black'
                 : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             rent
           </button>
@@ -110,6 +143,7 @@ const CreateListing = () => {
             className={`mr-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               !parking ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             YES
           </button>
@@ -120,6 +154,7 @@ const CreateListing = () => {
             className={`ml-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               parking ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             NO
           </button>
@@ -133,6 +168,7 @@ const CreateListing = () => {
             className={`mr-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               !furnished ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             YES
           </button>
@@ -143,6 +179,7 @@ const CreateListing = () => {
             className={`ml-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               furnished ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             NO
           </button>
@@ -174,6 +211,7 @@ const CreateListing = () => {
             className={`mr-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               !offer ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             YES
           </button>
@@ -184,6 +222,7 @@ const CreateListing = () => {
             className={`ml-2 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               offer ? 'bg-white text-black' : 'bg-slate-600 text-white'
             }`}
+            onClick={handleChange}
           >
             NO
           </button>
