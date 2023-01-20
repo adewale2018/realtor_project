@@ -1,8 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
 
 import { actions as Mixpanel } from '../../components/mixpanel/MixPanel';
+import Spinner from '../../components/spinner/Spinner';
+import { db } from '../../firebaseConfig';
+import { getAuth } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateListing = () => {
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const [geolocationEnabled, setGeolocationEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     type: 'rent',
     name: '',
@@ -15,7 +32,27 @@ const CreateListing = () => {
     offer: true,
     regularPrice: 0,
     discountPrice: 0,
+    latitude: 0,
+    longitude: 0,
+    images: {},
   });
+
+  const {
+    type,
+    name,
+    bedrooms,
+    bathrooms,
+    parking,
+    furnished,
+    description,
+    address,
+    offer,
+    regularPrice,
+    discountPrice,
+    latitude,
+    longitude,
+    images,
+  } = formData;
 
   const handleChange = (e) => {
     let boolean = null;
@@ -39,27 +76,100 @@ const CreateListing = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  };
+    setLoading(true);
+    if (+discountPrice >= +regularPrice) {
+      setLoading(false);
+      toast.error(
+        `Discounted price ${discountPrice} must be less than the regular price ${regularPrice}`
+      );
+      return;
+    }
+    if (images.length > 6) {
+      setLoading(false);
+      toast('Maximum of 6 images are allowed');
+      return;
+    }
+    let geolocation = {};
+    let location;
+    if (geolocationEnabled) {
+      const res = await fetch(
+        `https://googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GEOCODE_API_KEY}/`
+      );
+      const data = await res.json();
+      console.log('DATA>>>', data);
+      setLoading(false);
+      return;
+    }
 
-  const {
-    type,
-    name,
-    bedrooms,
-    bathrooms,
-    parking,
-    furnished,
-    description,
-    address,
-    offer,
-    regularPrice,
-    discountPrice,
-  } = formData;
+    const storeImage = async (image) => {
+      return new Promise((resolve, reject) => {
+        const storage = getStorage();
+        const filename = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+        const storageRef = ref(storage, filename);
+        const uploadTask = uploadBytesResumable(storageRef, image);
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case 'paused':
+                console.log('Upload is paused');
+                break;
+              case 'running':
+                console.log('Upload is running');
+                break;
+            }
+          },
+          (error) => {
+            // Handle unsuccessful uploads
+            reject(error);
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              resolve(downloadURL);
+            });
+          }
+        );
+      });
+    };
+
+    const imgUrls = await Promise.all(
+      [...images].map((image) => storeImage(image))
+    ).catch((error) => {
+      setLoading(false);
+      toast.error('Images not uploaded');
+      return;
+    });
+
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp(),
+    };
+    delete formDataCopy.images;
+    !formDataCopy.offer && delete formDataCopy.discountPrice;
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
+    setLoading(false);
+    toast.success('Listing successfully created');
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+  };
 
   useEffect(() => {
     Mixpanel.track('visit create listing page');
   }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <main className='px-2 max-w-md mx-auto mb-10'>
@@ -193,6 +303,36 @@ const CreateListing = () => {
           required
           className='w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-slate-600'
         />
+        {!geolocationEnabled && (
+          <div className='flex space-x-6 mt-6'>
+            <div>
+              <p className='text-lg font-semibold'>Latitude</p>
+              <input
+                className='w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:text-gray-700 text-center focus:border-slate-600'
+                type='number'
+                id='latitude'
+                min='-90'
+                max='90'
+                value={latitude}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <p className='text-lg font-semibold'>Longitude</p>
+              <input
+                className='w-full px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:bg-white focus:text-gray-700 text-center focus:border-slate-600'
+                type='number'
+                id='longitude'
+                min='-180'
+                max='180'
+                value={longitude}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+        )}
         <p className='text-lg font-semibold mt-6'>Description</p>
         <textarea
           placeholder='Description'
