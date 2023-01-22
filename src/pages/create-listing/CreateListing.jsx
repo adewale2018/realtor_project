@@ -7,13 +7,12 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 
-import { actions as Mixpanel } from '../../components/mixpanel/MixPanel';
-import Spinner from '../../components/spinner/Spinner';
 import { db } from '../../firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { Mixpanel, Spinner } from '../../components';
 
 const CreateListing = () => {
   const navigate = useNavigate();
@@ -124,6 +123,8 @@ const CreateListing = () => {
               case 'running':
                 console.log('Upload is running');
                 break;
+              default:
+                console.log('..');
             }
           },
           (error) => {
@@ -154,13 +155,14 @@ const CreateListing = () => {
       imgUrls,
       geolocation,
       timestamp: serverTimestamp(),
+      userRef: auth.currentUser.uid,
     };
     delete formDataCopy.images;
     !formDataCopy.offer && delete formDataCopy.discountPrice;
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
     setLoading(false);
     toast.success('Listing successfully created');
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+    navigate(`/category/${formDataCopy.type}/${docRef?.id}`);
   };
 
   useEffect(() => {
@@ -211,8 +213,8 @@ const CreateListing = () => {
           type='text'
           placeholder='Name'
           id='name'
-          maxLength={32}
-          minLength={10}
+          maxLength='32'
+          minLength='10'
           required
           className='mb-6 px-4 py-2 text-lg text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out w-full focus:text-gray-700 focus:bg-white focus:border-slate-600'
         />
