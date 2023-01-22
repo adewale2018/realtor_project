@@ -18,3 +18,4 @@
  - React-icons [React-icons](https://react-icons.github.io/react-icons).
  - Loader generator [Loading.io](https://loading.io/).
  - Mixpanel [Mixpanel](https://mixpanel.com/).
+ - UUID [uuid](https://www.npmjs.com/package/uuid).
