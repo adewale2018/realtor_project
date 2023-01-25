@@ -167,10 +167,10 @@ const Profile = () => {
       )}
       {!loading && listings?.length > 0 && (
         <div className='max-w-6xl px-3 mx-auto mt-6'>
-          <h2 className='text-2xl text-center font-semibold'>My Listings</h2>
-          <ul>
+          <h2 className='text-2xl text-center font-semibold mb-6'>My Listings</h2>
+          <ul className='sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mt-6 mb-6'>
             {listings.map((list) => (
-              <ListItem key={list.id} list={list} id={list.id} />
+              <ListItem key={list.id} list={list?.data} id={list.id} />
             ))}
           </ul>
         </div>

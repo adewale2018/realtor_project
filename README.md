@@ -19,3 +19,4 @@
  - Loader generator [Loading.io](https://loading.io/).
  - Mixpanel [Mixpanel](https://mixpanel.com/).
  - UUID [uuid](https://www.npmjs.com/package/uuid).
+ - React-Moment [moment](https://www.npmjs.com/package/react-moment).
