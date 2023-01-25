@@ -123,8 +123,6 @@ const CreateListing = () => {
               case 'running':
                 console.log('Upload is running');
                 break;
-              default:
-                console.log('..');
             }
           },
           (error) => {
@@ -159,10 +157,11 @@ const CreateListing = () => {
     };
     delete formDataCopy.images;
     !formDataCopy.offer && delete formDataCopy.discountPrice;
+    // console.log('FORMDATACOPY HERE', formDataCopy)
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
     setLoading(false);
     toast.success('Listing successfully created');
-    navigate(`/category/${formDataCopy.type}/${docRef?.id}`);
+    navigate(`/category/${formDataCopy?.type}/${docRef?.id}`);
   };
 
   useEffect(() => {
