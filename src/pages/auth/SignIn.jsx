@@ -31,7 +31,7 @@ const SignIn = () => {
         email,
         password
       );
-      if (userCredential) {
+      if (userCredential.user) {
         toast.success('Successfully login');
         Mixpanel.track('Successful login');
         Mixpanel.identify(userCredential.user.uid);

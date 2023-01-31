@@ -5,5 +5,6 @@ import Offers from './offers/Offers'
 import Profile from './profile/Profile'
 import SignIn from './auth/SignIn'
 import SignUp from './auth/SignUp'
+import EditListing from './profile/EditListing'
 
-export { Home, Profile, Offers, ForgotPassword, SignIn, SignUp, CreateListing  }
+export { Home, Profile, Offers, ForgotPassword, SignIn, SignUp, CreateListing, EditListing  }

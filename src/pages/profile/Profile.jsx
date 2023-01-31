@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   orderBy,
@@ -64,6 +65,19 @@ const Profile = () => {
     setIsEditing((prevState) => !prevState);
     isEditing && onSubmit();
   };
+  const handleEdit = (itemId) => {
+    navigate(`/edit-listing/${itemId}`)
+  };
+
+  const handleDelete = async (itemId) => {
+if(window.confirm('Are you sure you want to delete?')) {
+  await deleteDoc(doc(db, 'listings', itemId))
+  const updatedListings  = listings.filter(listing => listing.id !== itemId)
+  setListings(updatedListings)
+  toast.success('Successfully deleted the item')
+}
+  };
+
   const { name, email } = formData;
 
   useEffect(() => {
@@ -167,10 +181,18 @@ const Profile = () => {
       )}
       {!loading && listings?.length > 0 && (
         <div className='max-w-6xl px-3 mx-auto mt-6'>
-          <h2 className='text-2xl text-center font-semibold mb-6'>My Listings</h2>
+          <h2 className='text-2xl text-center font-semibold mb-6'>
+            My Listings
+          </h2>
           <ul className='sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mt-6 mb-6'>
             {listings.map((list) => (
-              <ListItem key={list.id} list={list?.data} id={list.id} />
+              <ListItem
+                key={list.id}
+                list={list?.data}
+                id={list.id}
+                onDelete={() => handleDelete(list.id)}
+                onEdit={() => handleEdit(list.id)}
+              />
             ))}
           </ul>
         </div>
