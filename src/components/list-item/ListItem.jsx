@@ -2,7 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import { MdLocationOn } from 'react-icons/md';
-const ListItem = ({ id, list }) => {
+import { AiFillDelete } from 'react-icons/ai';
+import { FiEdit } from 'react-icons/fi';
+
+const ListItem = ({ id, list, onEdit, onDelete }) => {
   return (
     <li className='relative bg-white flex flex-col justify-between items-center shadow-md hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 m-[10px]'>
       <Link className='contents' to={`/category/${list.type}/${id}`}>
@@ -29,11 +32,9 @@ const ListItem = ({ id, list }) => {
           <p className='text-[#457b9d] mt-2 font-semibold'>
             $
             {list.offer
-              ? list.discountPrice
-                  .toString()
+              ? list.discountPrice?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              : list.regularPrice
-                  .toString()
+              : list.regularPrice?.toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             {list.type === 'rent' && '/ month'}
           </p>
@@ -55,6 +56,18 @@ const ListItem = ({ id, list }) => {
           </div>
         </div>
       </Link>
+      {onDelete && (
+        <AiFillDelete
+          className='absolute bottom-2 right-2 h-[14px] cursor-pointer text-red-500'
+          onClick={() => onDelete(id)}
+        />
+      )}
+      {onEdit && (
+        <FiEdit
+          className='absolute bottom-2 right-7 h-4 cursor-pointer text-green-500'
+          onClick={() => onEdit(id)}
+        />
+      )}
     </li>
   );
 };

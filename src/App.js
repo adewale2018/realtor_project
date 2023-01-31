@@ -6,6 +6,7 @@ import {
   Profile,
   SignIn,
   SignUp,
+  EditListing
 } from './pages';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
@@ -29,6 +30,9 @@ const App = () => {
           <Route path='/offers' element={<Offers />} />
           <Route path='/create-listing' element={<PrivateRoute />}>
             <Route path='/create-listing' element={<CreateListing />} />
+          </Route>
+          <Route path='/edit-listing' element={<PrivateRoute />}>
+            <Route path='/edit-listing/:listingId' element={<EditListing />} />
           </Route>
         </Routes>
       </Router>
