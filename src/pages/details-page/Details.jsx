@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
-import { Spinner } from '../../components';
+import 'swiper/css/bundle';
+
+import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, {
-  Navigation,
-  Pagination,
   Autoplay,
   EffectFade,
+  Navigation,
+  Pagination,
 } from 'swiper';
-import 'swiper/css/bundle';
+import { doc, getDoc } from 'firebase/firestore';
+
+import { FaShare } from 'react-icons/fa';
+import { Spinner } from '../../components';
+import { db } from '../../firebaseConfig';
+import { useParams } from 'react-router-dom';
 
 const Details = () => {
   const { categoryId, listingId: id } = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [shareCopied, setShareCopied] = useState(false);
 
   SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -33,6 +37,14 @@ const Details = () => {
 
     fetchListing();
   }, [id]);
+
+  const handleLinkCopied = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShareCopied(true);
+    setTimeout(() => {
+      setShareCopied(false);
+    }, 2000);
+  };
 
   if (loading) {
     return <Spinner />;
@@ -59,6 +71,17 @@ const Details = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+      <div
+        onClick={handleLinkCopied}
+        className='fixed top-[13%] z-10 right-[3%] bg-white cursor-pointer border-2 border-gray-400 rounded-full w-12 h-12 flex justify-center items-center'
+      >
+        <FaShare className='text-lg text-slate-500' />
+      </div>
+      {shareCopied && (
+        <p className='fixed top-[23%] right-[5%] font-semibold border-2 border-gray-400 rounded-md bg-white z-10 p-1'>
+          Link Copied
+        </p>
+      )}
     </main>
   );
 };
